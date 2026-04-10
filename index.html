@@ -14,6 +14,10 @@
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"/>
+
 <script>
 const map = L.map('map').setView([36.924, 14.740], 15);
 
@@ -21,30 +25,52 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19
 }).addTo(map);
 
+// Real walking route
+L.Routing.control({
+  waypoints: [
+    L.latLng(36.9269, 14.7373),
+    L.latLng(36.9256, 14.7390),
+    L.latLng(36.9238, 14.7405),
+    L.latLng(36.9235, 14.7410),
+    L.latLng(36.9229, 14.7419),
+    L.latLng(36.9219, 14.7432),
+    L.latLng(36.9205, 14.7448)
+  ],
+  router: L.Routing.osrmv1({
+    serviceUrl: 'https://router.project-osrm.org/route/v1'
+  }),
+  lineOptions: {
+    styles: [{color: 'red', weight: 5}]
+  },
+  show: false
+}).addTo(map);
+
+// Markers with names
 const stops = [
-  ["1. Santa Maria delle Scale", 36.9269, 14.7373],
-  ["2. Chiesa del Purgatorio", 36.9256, 14.7390],
-  ["3. Duomo di San Giorgio", 36.9238, 14.7405],
-  ["4. Circolo di Conversazione", 36.9235, 14.7410],
-  ["5. Palazzo La Rocca", 36.9229, 14.7419],
-  ["6. Portale di San Giorgio", 36.9219, 14.7432],
-  ["7. Giardino Ibleo", 36.9205, 14.7448]
+  "Santa Maria delle Scale",
+  "Chiesa del Purgatorio",
+  "Duomo di San Giorgio",
+  "Circolo di Conversazione",
+  "Palazzo La Rocca",
+  "Portale di San Giorgio",
+  "Giardino Ibleo"
 ];
 
-let route = [];
+const coords = [
+  [36.9269, 14.7373],
+  [36.9256, 14.7390],
+  [36.9238, 14.7405],
+  [36.9235, 14.7410],
+  [36.9229, 14.7419],
+  [36.9219, 14.7432],
+  [36.9205, 14.7448]
+];
 
-stops.forEach(stop => {
-  L.marker([stop[1], stop[2]])
-    .addTo(map)
-    .bindPopup("<b>" + stop[0] + "</b>");
-
-  route.push([stop[1], stop[2]]);
+coords.forEach((c, i) => {
+  L.marker(c).addTo(map).bindPopup("<b>" + (i+1) + ". " + stops[i] + "</b>");
 });
-
-L.polyline(route, {color:'red'}).addTo(map);
 </script>
 
 </body>
 </html>
-5. Scroll down → click Commit changes
-6. Wait 30 seconds then refresh:
+🚀 What this fixes
