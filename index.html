@@ -3,74 +3,94 @@
 <head>
   <title>Ragusa Walking Tour</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <style>
     body { margin:0; }
     #map { height:100vh; }
+    .popup img {
+      width:100%;
+      border-radius:8px;
+      margin-bottom:5px;
+    }
   </style>
 </head>
-<body>
 
+<body>
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"/>
 
 <script>
 const map = L.map('map').setView([36.924, 14.740], 15);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19
-}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-// Real walking route
-L.Routing.control({
-  waypoints: [
-    L.latLng(36.9269, 14.7373),
-    L.latLng(36.9256, 14.7390),
-    L.latLng(36.9238, 14.7405),
-    L.latLng(36.9235, 14.7410),
-    L.latLng(36.9229, 14.7419),
-    L.latLng(36.9219, 14.7432),
-    L.latLng(36.9205, 14.7448)
-  ],
-  router: L.Routing.osrmv1({
-    serviceUrl: 'https://router.project-osrm.org/route/v1'
-  }),
-  lineOptions: {
-    styles: [{color: 'red', weight: 5}]
-  },
-  show: false
-}).addTo(map);
-
-// Markers with names
+// TOUR STOPS
 const stops = [
-  "Santa Maria delle Scale",
-  "Chiesa del Purgatorio",
-  "Duomo di San Giorgio",
-  "Circolo di Conversazione",
-  "Palazzo La Rocca",
-  "Portale di San Giorgio",
-  "Giardino Ibleo"
+{
+  name: "Santa Maria delle Scale",
+  coords: [36.9269,14.7373],
+  img: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Ragusa_Ibla_view.jpg",
+  text: "One of the best panoramic views in Sicily. From here you descend into Ibla."
+},
+{
+  name: "Descent into Ibla",
+  coords: [36.9255,14.7385],
+  img: "https://upload.wikimedia.org/wikipedia/commons/8/88/Ragusa_stairs.jpg",
+  text: "Walk down through winding streets connecting the two parts of Ragusa."
+},
+{
+  name: "Duomo di San Giorgio",
+  coords: [36.9238,14.7405],
+  img: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Duomo_Ragusa.jpg",
+  text: "The iconic Baroque cathedral and heart of Ragusa Ibla."
+},
+{
+  name: "Piazza Duomo",
+  coords: [36.9236,14.7410],
+  img: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Ragusa_piazza.jpg",
+  text: "Relax here, take photos, and enjoy the atmosphere."
+},
+{
+  name: "Palazzo La Rocca",
+  coords: [36.9229,14.7419],
+  img: "https://upload.wikimedia.org/wikipedia/commons/6/66/Palazzo_La_Rocca.jpg",
+  text: "Famous for its dramatic baroque balconies."
+},
+{
+  name: "Giardino Ibleo",
+  coords: [36.9205,14.7448],
+  img: "https://upload.wikimedia.org/wikipedia/commons/f/f5/Giardino_Ibleo.jpg",
+  text: "Beautiful gardens and a peaceful end to the walk."
+},
+{
+  name: "Dinner at Imperfetta",
+  coords: [36.9212,14.7440],
+  img: "https://images.unsplash.com/photo-1555992336-03a23c6f7c70",
+  text: "Finish your tour with dinner — one of the best spots in Ragusa."
+}
 ];
 
-const coords = [
-  [36.9269, 14.7373],
-  [36.9256, 14.7390],
-  [36.9238, 14.7405],
-  [36.9235, 14.7410],
-  [36.9229, 14.7419],
-  [36.9219, 14.7432],
-  [36.9205, 14.7448]
-];
+// MARKERS WITH IMAGES
+stops.forEach((stop,i)=>{
+  const popup = `
+    <div class="popup">
+      <img src="${stop.img}">
+      <b>${i+1}. ${stop.name}</b><br>
+      ${stop.text}
+    </div>
+  `;
 
-coords.forEach((c, i) => {
-  L.marker(c).addTo(map).bindPopup("<b>" + (i+1) + ". " + stops[i] + "</b>");
+  L.marker(stop.coords)
+    .addTo(map)
+    .bindPopup(popup);
 });
-</script>
 
+// SIMPLE ROUTE (cleaner than before)
+const route = stops.map(s=>s.coords);
+L.polyline(route,{color:'red',weight:4}).addTo(map);
+
+</script>
 </body>
 </html>
-🚀 What this fixes
